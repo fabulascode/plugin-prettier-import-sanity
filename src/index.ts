@@ -1,29 +1,35 @@
 import { parser } from './parser';
-const { concat, hardline } = require('prettier').doc.builders;
+import { printer } from './printer';
 
-const languages = [
-  { extensions: ['.js'], name: 'JavaScript', parsers: ['babel-custom'] },
+export const defaultOptions = {};
+
+export const languages = [
+  {
+    name: 'JavaScript',
+    extensions: ['.js'],
+    parsers: ['insanity-parse'],
+  },
 ];
 
-const parsers = {
-  'babel-custom': {
+export const parsers = {
+  'insanity-parse': {
     parse: parser,
-    astFormat: 'babel-ast',
+    astFormat: 'insanity-ast',
   },
 };
 
-function printJS(path: any, _, print: any) {
-  return concat([path.call(print, 'value'), hardline]);
-}
-
-const printers = {
-  'babel-ast': {
-    print: printJS,
+export const printers = {
+  'insanity-ast': {
+    print: printer,
   },
 };
+
+const options = {};
 
 module.exports = {
-  languages,
-  parsers,
   printers,
+  parsers,
+  languages,
+  defaultOptions,
+  options,
 };

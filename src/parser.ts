@@ -7,13 +7,18 @@ import jscs, {
 } from 'jscodeshift';
 import { Collection } from 'jscodeshift/src/Collection';
 import { compareNames } from './utils';
+import { parse as babelParser } from '@babel/parser';
 
-export const parser: CustomParser = (text: string, { babel }, {}): AST => {
+export const parser: CustomParser = (text: string, {}, {}): AST => {
   const root = jscs(text);
   const importStatementMap: { [index: string]: ImportDeclaration } = {};
   const importStatements: Collection<ImportDeclaration> = root.find(
     ImportDeclaration,
     {}
+  );
+
+  console.log(
+    `\n ...using Prettier's plugin system to do some housekeeping... \n`
   );
 
   importStatements.forEach(statement => {
@@ -72,9 +77,9 @@ export const parser: CustomParser = (text: string, { babel }, {}): AST => {
     return jscs.importDeclaration(newNode.specifiers, newNode.source);
   });
 
-  const AST = babel(root.toSource(), {
-    allowImportExportEverywhere: true,
+  return babelParser(root.toSource(), {
+    sourceType: 'module',
   });
-
-  return AST;
 };
+
+module.exports = parser;
